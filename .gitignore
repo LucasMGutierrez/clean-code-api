@@ -1,0 +1,31 @@
+node_modules
+
+# Coverage reports
+.coverage
+
+# build
+dist
+
+# Logs
+yarn-error.log
+
+# Editors
+.vscode
+.idea
+
+# .env files
+.env*
+!.env.template
+
+# MongoDB database
+.data
+
+# NewRelic Agent Log
+newrelic_agent.log
+
+# Jest-junit test results
+junit.xml
+test-results.xml
+
+# Secret K8S files
+k8s/secret*.*
