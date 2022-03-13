@@ -2,12 +2,12 @@ import { MissingParamError } from '../errors/missing-param-error';
 import { badRequest } from '../helpers/http-helper';
 import { HttpRequest, httpResponse } from '../protocols/http';
 
-type RequestBodyType = {
-  name?: string;
-  email?: string;
+type RequestBodyType = Partial<{
+  name: string;
+  email: string;
   password: string;
   passwordConfirmation: string;
-};
+}>;
 
 export class SignUpController {
   handle(httpRequest: HttpRequest<RequestBodyType>): httpResponse<Error | undefined> {
@@ -15,7 +15,12 @@ export class SignUpController {
       throw new Error('No body');
     }
 
-    const requiredFields: Array<keyof RequestBodyType> = ['name', 'email'];
+    const requiredFields: Array<keyof RequestBodyType> = [
+      'name',
+      'email',
+      'password',
+      'passwordConfirmation',
+    ];
 
     for (const field of requiredFields) {
       if (!httpRequest.body[field]) {
