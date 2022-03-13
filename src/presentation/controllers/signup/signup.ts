@@ -1,6 +1,7 @@
 import { InvalidParamError, MissingParamError } from '../../errors';
 import { badRequest, serverError } from '../../helpers/http-helper';
 import {
+  AccountModel,
   AddAccount,
   Controller,
   EmailValidator,
@@ -15,7 +16,7 @@ type RequestBodyType = Partial<{
   passwordConfirmation: string;
 }>;
 
-type ResponseBodyType = Error | undefined;
+type ResponseBodyType = Error | AccountModel;
 
 export class SignUpController implements Controller<RequestBodyType, ResponseBodyType> {
   private readonly emailValidator: EmailValidator;
@@ -27,7 +28,7 @@ export class SignUpController implements Controller<RequestBodyType, ResponseBod
     this.addAccount = addAccount;
   }
 
-  handle(httpRequest: HttpRequest<RequestBodyType>): httpResponse<Error | undefined> {
+  handle(httpRequest: HttpRequest<RequestBodyType>): httpResponse<ResponseBodyType> {
     try {
       if (!httpRequest.body) {
         throw new Error('No body');
@@ -57,11 +58,11 @@ export class SignUpController implements Controller<RequestBodyType, ResponseBod
         return badRequest(new InvalidParamError('email'));
       }
 
-      this.addAccount.add({ name: name!, email: email!, password: password! });
+      const account = this.addAccount.add({ name: name!, email: email!, password: password! });
 
       return {
         statusCode: 200,
-        body: undefined,
+        body: account,
       };
     } catch (err) {
       return serverError();
