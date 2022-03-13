@@ -1,5 +1,6 @@
 import { InvalidParamError } from '../errors/invalid-param-error';
 import { MissingParamError } from '../errors/missing-param-error';
+import { ServerError } from '../errors/server-error';
 import { badRequest } from '../helpers/http-helper';
 import { Controller } from '../protocols/controller';
 import { EmailValidator } from '../protocols/email-validator';
@@ -22,31 +23,38 @@ export class SignUpController implements Controller<RequestBodyType, ResponseBod
   }
 
   handle(httpRequest: HttpRequest<RequestBodyType>): httpResponse<Error | undefined> {
-    if (!httpRequest.body) {
-      throw new Error('No body');
-    }
-
-    const requiredFields: Array<keyof RequestBodyType> = [
-      'name',
-      'email',
-      'password',
-      'passwordConfirmation',
-    ];
-
-    for (const field of requiredFields) {
-      if (!httpRequest.body[field]) {
-        return badRequest(new MissingParamError(field));
+    try {
+      if (!httpRequest.body) {
+        throw new Error('No body');
       }
-    }
 
-    const isEmailValid = this.emailValidator.isValid(httpRequest.body.email!);
-    if (!isEmailValid) {
-      return badRequest(new InvalidParamError('email'));
-    }
+      const requiredFields: Array<keyof RequestBodyType> = [
+        'name',
+        'email',
+        'password',
+        'passwordConfirmation',
+      ];
 
-    return {
-      statusCode: 200,
-      body: undefined,
-    };
+      for (const field of requiredFields) {
+        if (!httpRequest.body[field]) {
+          return badRequest(new MissingParamError(field));
+        }
+      }
+
+      const isEmailValid = this.emailValidator.isValid(httpRequest.body.email!);
+      if (!isEmailValid) {
+        return badRequest(new InvalidParamError('email'));
+      }
+
+      return {
+        statusCode: 200,
+        body: undefined,
+      };
+    } catch (err) {
+      return {
+        statusCode: 500,
+        body: new ServerError(),
+      };
+    }
   }
 }
