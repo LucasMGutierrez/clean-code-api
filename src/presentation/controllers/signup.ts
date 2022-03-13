@@ -11,12 +11,16 @@ type RequestBodyType = {
 
 export class SignUpController {
   handle(httpRequest: HttpRequest<RequestBodyType>): httpResponse<Error | undefined> {
-    if (!httpRequest.body?.name) {
-      return badRequest(new MissingParamError('name'));
+    if (!httpRequest.body) {
+      throw new Error('No body');
     }
 
-    if (!httpRequest.body?.email) {
-      return badRequest(new MissingParamError('email'));
+    const requiredFields: Array<keyof RequestBodyType> = ['name', 'email'];
+
+    for (const field of requiredFields) {
+      if (!httpRequest.body[field]) {
+        return badRequest(new MissingParamError(field));
+      }
     }
 
     return {
