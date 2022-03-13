@@ -1,5 +1,6 @@
 import { MissingParamError } from '../errors/missing-param-error';
 import { badRequest } from '../helpers/http-helper';
+import { Controller } from '../protocols/controller';
 import { HttpRequest, httpResponse } from '../protocols/http';
 
 type RequestBodyType = Partial<{
@@ -9,7 +10,9 @@ type RequestBodyType = Partial<{
   passwordConfirmation: string;
 }>;
 
-export class SignUpController {
+type ResponseBodyType = Error | undefined;
+
+export class SignUpController implements Controller<RequestBodyType, ResponseBodyType> {
   handle(httpRequest: HttpRequest<RequestBodyType>): httpResponse<Error | undefined> {
     if (!httpRequest.body) {
       throw new Error('No body');
