@@ -1,7 +1,12 @@
-import { AddAccount } from '../../domain/usecases/add-account';
-import { InvalidParamError, MissingParamError } from '../errors';
-import { badRequest, serverError } from '../helpers/http-helper';
-import { Controller, EmailValidator, HttpRequest, httpResponse } from '../protocols';
+import { InvalidParamError, MissingParamError } from '../../errors';
+import { badRequest, serverError } from '../../helpers/http-helper';
+import {
+  AddAccount,
+  Controller,
+  EmailValidator,
+  HttpRequest,
+  httpResponse,
+} from './signup-protocols';
 
 type RequestBodyType = Partial<{
   name: string;
