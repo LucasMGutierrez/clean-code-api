@@ -1,8 +1,6 @@
 import { InvalidParamError, MissingParamError } from '../errors';
 import { badRequest, serverError } from '../helpers/http-helper';
-import { Controller } from '../protocols/controller';
-import { EmailValidator } from '../protocols/email-validator';
-import { HttpRequest, httpResponse } from '../protocols/http';
+import { Controller, EmailValidator, HttpRequest, httpResponse } from '../protocols';
 
 type RequestBodyType = Partial<{
   name: string;
