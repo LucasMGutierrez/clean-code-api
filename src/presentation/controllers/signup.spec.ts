@@ -6,16 +6,29 @@ interface SutTypes {
   sut: SignUpController;
   emailValidatorStub: EmailValidator;
 }
-
-// SUT: System Under Test
-const makeSut = (): SutTypes => {
+const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isValid(email: string): boolean {
-      return false;
+      return true;
     }
   }
-  const emailValidatorStub = new EmailValidatorStub();
+  return new EmailValidatorStub();
+};
+
+const makeEmailValidatorWithError = (): EmailValidator => {
+  class EmailValidatorStub implements EmailValidator {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isValid(email: string): boolean {
+      throw new Error();
+    }
+  }
+  return new EmailValidatorStub();
+};
+
+// SUT: System Under Test
+const makeSut = (): SutTypes => {
+  const emailValidatorStub = makeEmailValidator();
 
   const sut = new SignUpController(emailValidatorStub);
 
@@ -126,13 +139,7 @@ describe('SignUp Controller', () => {
   });
 
   test('should return 500 if EmailValidator throws', () => {
-    class EmailValidatorStub implements EmailValidator {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      isValid(email: string): boolean {
-        throw new Error();
-      }
-    }
-    const emailValidatorStub = new EmailValidatorStub();
+    const emailValidatorStub = makeEmailValidatorWithError();
 
     const sut = new SignUpController(emailValidatorStub);
 
