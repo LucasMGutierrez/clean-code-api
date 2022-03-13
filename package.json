@@ -14,6 +14,7 @@
     "test:vi": "yarn test -- --coverage"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.4.1",
     "@types/validator": "^13.7.1",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
@@ -31,6 +32,7 @@
     "typescript": "^4.6.2"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "validator": "^13.7.0"
   }
 }
