@@ -1,4 +1,4 @@
-import { InvalidParamError, MissingParamError } from '../../errors';
+import { InvalidParamError, MissingBodyError, MissingParamError } from '../../errors';
 import { badRequest, ok, serverError } from '../../helpers/http-helper';
 import {
   AccountModel,
@@ -31,7 +31,7 @@ export class SignUpController implements Controller<RequestBodyType, ResponseBod
   handle(httpRequest: HttpRequest<RequestBodyType>): httpResponse<ResponseBodyType> {
     try {
       if (!httpRequest.body) {
-        throw new Error('No body');
+        return badRequest(new MissingBodyError());
       }
 
       const requiredFields: Array<keyof RequestBodyType> = [

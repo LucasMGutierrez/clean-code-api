@@ -1,4 +1,4 @@
-import { InvalidParamError, MissingParamError, ServerError } from '../../errors';
+import { InvalidParamError, MissingBodyError, MissingParamError, ServerError } from '../../errors';
 import { SignUpController } from './signup';
 import { AccountModel, AddAccount, AddAccountModel, EmailValidator } from './signup-protocols';
 
@@ -50,6 +50,16 @@ const makeSut = (): SutTypes => {
 };
 
 describe('SignUp Controller', () => {
+  test('should return 400 if no body is provided', () => {
+    const { sut } = makeSut();
+    const httpRequest = {};
+
+    const httpResponse = sut.handle(httpRequest);
+
+    expect(httpResponse.statusCode).toEqual(400);
+    expect(httpResponse.body).toEqual(new MissingBodyError());
+  });
+
   test('should return 400 if no name is provided', () => {
     const { sut } = makeSut();
     const httpRequest = {
