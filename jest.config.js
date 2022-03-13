@@ -4,6 +4,6 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: '.coverage',
   coverageProvider: 'v8',
-  modulePathIgnorePatterns: ['.data/', '.dist/', '.src/presentation/protocols/'],
+  modulePathIgnorePatterns: ['.dist/', '.src/presentation/protocols/'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*-protocols.ts', '!src/presentation/protocols/'],
 };
