@@ -7,3 +7,5 @@ export const serverError = (): httpResponse<Error> => ({
   statusCode: 500,
   body: new ServerError(),
 });
+
+export const ok = <T>(data: T): httpResponse<T> => ({ statusCode: 200, body: data });
