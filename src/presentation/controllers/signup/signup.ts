@@ -6,7 +6,6 @@ import {
   Controller,
   EmailValidator,
   HttpRequest,
-  httpResponse,
 } from './signup-protocols';
 
 type RequestBodyType = Partial<{
@@ -28,7 +27,7 @@ export class SignUpController implements Controller<RequestBodyType, ResponseBod
     this.addAccount = addAccount;
   }
 
-  handle(httpRequest: HttpRequest<RequestBodyType>): httpResponse<ResponseBodyType> {
+  async handle(httpRequest: HttpRequest<RequestBodyType>) {
     try {
       if (!httpRequest.body) {
         return badRequest(new MissingBodyError());
@@ -58,7 +57,11 @@ export class SignUpController implements Controller<RequestBodyType, ResponseBod
         return badRequest(new InvalidParamError('email'));
       }
 
-      const account = this.addAccount.add({ name: name!, email: email!, password: password! });
+      const account = await this.addAccount.add({
+        name: name!,
+        email: email!,
+        password: password!,
+      });
 
       return ok(account);
     } catch (err) {
