@@ -29,3 +29,6 @@ test-results.xml
 
 # Secret K8S files
 k8s/secret*.*
+
+# config for jest-mongodb
+globalConfig.json
