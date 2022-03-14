@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { Collection, MongoClient } from 'mongodb';
 
 export class MongoHelper {
   client: MongoClient;
@@ -16,4 +16,18 @@ export class MongoHelper {
   async disconnect() {
     await this.client.close();
   }
+
+  getCollection(name: string): Collection {
+    return this.client.db().collection(name);
+  }
 }
+
+let mongoHelper: MongoHelper | undefined;
+
+export const getMongoHelper = async () => {
+  if (!mongoHelper) {
+    mongoHelper = await MongoHelper.connect(process.env.MONGO_URL!);
+  }
+
+  return mongoHelper;
+};
