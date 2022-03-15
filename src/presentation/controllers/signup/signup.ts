@@ -15,7 +15,7 @@ type RequestBodyType = Partial<{
   passwordConfirmation: string;
 }>;
 
-type ResponseBodyType = Error | AccountModel;
+type ResponseBodyType = AccountModel;
 
 export class SignUpController implements Controller<RequestBodyType, ResponseBodyType> {
   private readonly emailValidator: EmailValidator;
