@@ -24,9 +24,9 @@ export class MongoHelper {
 
 let mongoHelper: MongoHelper | undefined;
 
-export const getMongoHelper = async () => {
+export const getMongoHelper = async (uri?: string) => {
   if (!mongoHelper) {
-    mongoHelper = await MongoHelper.connect(process.env.MONGO_URL!);
+    mongoHelper = await MongoHelper.connect(uri || process.env.MONGO_URL!);
   }
 
   return mongoHelper;
