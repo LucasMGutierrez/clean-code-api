@@ -1,17 +1,17 @@
 import { AccountModel } from '../../../../domain/models/account';
-import { getMongoHelper, MongoHelper } from '../helpers/mongo-helper';
+import { getMongoConnection, MongoHelper } from '../helpers/mongo-helper';
 import { AccountMongoRepository } from './account';
 
 describe('Account Mongo Repository', () => {
   let mongoHelper: MongoHelper;
 
   beforeAll(async () => {
-    mongoHelper = await getMongoHelper();
+    mongoHelper = await getMongoConnection();
   });
 
   beforeEach(async () => {
-    mongoHelper = await getMongoHelper();
-    const accountCollection = mongoHelper.getCollection('accounts');
+    mongoHelper = await getMongoConnection();
+    const accountCollection = await mongoHelper.getCollection('accounts');
     await accountCollection.deleteMany({});
   });
 

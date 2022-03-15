@@ -1,32 +1,39 @@
 import { Collection, MongoClient } from 'mongodb';
 
 export class MongoHelper {
-  client: MongoClient;
+  client: MongoClient | null;
 
-  constructor(client: MongoClient) {
-    this.client = client;
+  uri: string;
+
+  constructor(uri: string) {
+    this.uri = uri;
+    this.client = null;
   }
 
-  static async connect(uri: string) {
-    const client = await MongoClient.connect(uri);
-    const mongoHelper = new MongoHelper(client);
-    return mongoHelper;
+  async connect() {
+    this.client = await MongoClient.connect(this.uri);
   }
 
   async disconnect() {
-    await this.client.close();
+    await this.client?.close();
+    this.client = null;
   }
 
-  getCollection(name: string): Collection {
-    return this.client.db().collection(name);
+  async getCollection(name: string): Promise<Collection> {
+    if (!this.client) {
+      await this.connect();
+    }
+
+    return this.client!.db().collection(name);
   }
 }
 
 let mongoHelper: MongoHelper | undefined;
 
-export const getMongoHelper = async (uri?: string) => {
+export const getMongoConnection = async (uri?: string): Promise<MongoHelper> => {
   if (!mongoHelper) {
-    mongoHelper = await MongoHelper.connect(uri || process.env.MONGO_URL!);
+    mongoHelper = new MongoHelper(uri || process.env.MONGO_URL!);
+    await mongoHelper.connect();
   }
 
   return mongoHelper;
