@@ -12,23 +12,41 @@ type ResBody = {
   name: string;
 };
 
+type SutTypes = {
+  sut: LogControllerDecorator<ReqBody, ResBody>;
+  controllerStub: Controller<ReqBody, ResBody>;
+};
+
+const makeController = () => {
+  class ControllerStub implements Controller<ReqBody, ResBody> {
+    async handle(httpRequest: HttpRequest<ReqBody>) {
+      const httpResponse = {
+        body: {
+          name: httpRequest.body!.name,
+        },
+        statusCode: 200,
+      };
+
+      return httpResponse;
+    }
+  }
+  return new ControllerStub();
+};
+
+const makeSut = (): SutTypes => {
+  const controllerStub = makeController();
+  const sut = new LogControllerDecorator(controllerStub);
+
+  return {
+    sut,
+    controllerStub,
+  };
+};
+
 describe('LogController Decorator', () => {
   test('should call controller handle', async () => {
-    class ControllerStub implements Controller<ReqBody, ResBody> {
-      async handle(httpRequest: HttpRequest<ReqBody>) {
-        const httpResponse = {
-          body: {
-            name: httpRequest.body!.name,
-          },
-          statusCode: 200,
-        };
-
-        return httpResponse;
-      }
-    }
-    const controllerStub = new ControllerStub();
+    const { sut, controllerStub } = makeSut();
     const handleSpy = jest.spyOn(controllerStub, 'handle');
-    const sut = new LogControllerDecorator(controllerStub);
     const httpRequest = {
       body: {
         email: 'any_email@mail.com',
