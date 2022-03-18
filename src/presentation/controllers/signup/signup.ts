@@ -8,14 +8,14 @@ import {
   HttpRequest,
 } from './signup-protocols';
 
-type RequestBodyType = Partial<{
+export type RequestBodyType = Partial<{
   name: string;
   email: string;
   password: string;
   passwordConfirmation: string;
 }>;
 
-type ResponseBodyType = AccountModel;
+export type ResponseBodyType = AccountModel;
 
 export class SignUpController implements Controller<RequestBodyType, ResponseBodyType> {
   private readonly emailValidator: EmailValidator;
