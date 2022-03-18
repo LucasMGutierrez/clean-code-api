@@ -65,7 +65,7 @@ export class SignUpController implements Controller<RequestBodyType, ResponseBod
 
       return ok(account);
     } catch (err) {
-      return serverError();
+      return serverError(err as Error);
     }
   }
 }
