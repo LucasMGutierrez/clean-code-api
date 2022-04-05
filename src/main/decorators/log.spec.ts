@@ -1,3 +1,5 @@
+import { LogErrorRepository } from '../../data/protocols/log-error-repository';
+import { serverError } from '../../presentation/helpers/http-helper';
 import { Controller, HttpRequest } from '../../presentation/protocols';
 import { LogControllerDecorator } from './log';
 
@@ -15,6 +17,7 @@ type ResBody = {
 type SutTypes = {
   sut: LogControllerDecorator<ReqBody, ResBody>;
   controllerStub: Controller<ReqBody, ResBody>;
+  logErrorRepositoryStub: LogErrorRepository;
 };
 
 const makeController = () => {
@@ -33,13 +36,26 @@ const makeController = () => {
   return new ControllerStub();
 };
 
+const makeLogErrorRepository = (): LogErrorRepository => {
+  class LogErrorRepositoryStub implements LogErrorRepository {
+    // eslint-disable-next-line
+    async log(stack: string) {
+      return undefined;
+    }
+  }
+
+  return new LogErrorRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
   const controllerStub = makeController();
-  const sut = new LogControllerDecorator(controllerStub);
+  const logErrorRepositoryStub = makeLogErrorRepository();
+  const sut = new LogControllerDecorator(controllerStub, logErrorRepositoryStub);
 
   return {
     sut,
     controllerStub,
+    logErrorRepositoryStub,
   };
 };
 
@@ -81,5 +97,29 @@ describe('LogController Decorator', () => {
       },
       statusCode: 200,
     });
+  });
+
+  test('should call LogErrorRepository with correct if controller returns server error', async () => {
+    const { sut, controllerStub, logErrorRepositoryStub } = makeSut();
+    const fakeError = new Error();
+    fakeError.stack = 'any_stack';
+
+    const error = serverError(fakeError);
+
+    const logSpy = jest.spyOn(logErrorRepositoryStub, 'log');
+    jest.spyOn(controllerStub, 'handle').mockResolvedValueOnce(error);
+
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        name: 'any_name',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    };
+
+    await sut.handle(httpRequest);
+
+    expect(logSpy).toHaveBeenCalledWith('any_stack');
   });
 });

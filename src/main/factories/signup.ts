@@ -19,5 +19,7 @@ export const makeSignUpController = (): Controller<RequestBodyType, ResponseBody
 
   const signUpController = new SignUpController(emailValidatorAdapter, dbAddAccount);
 
-  return new LogControllerDecorator(signUpController);
+  const logErrorRepository = new LogErrorRepository();
+
+  return new LogControllerDecorator(signUpController, logErrorRepository);
 };
