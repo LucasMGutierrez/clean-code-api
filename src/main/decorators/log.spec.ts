@@ -48,7 +48,7 @@ const makeController = () => {
 const makeLogErrorRepository = (): LogErrorRepository => {
   class LogErrorRepositoryStub implements LogErrorRepository {
     // eslint-disable-next-line
-    async log(stack: string) {
+    async logError(stack: string) {
       return undefined;
     }
   }
@@ -101,7 +101,7 @@ describe('LogController Decorator', () => {
 
     const error = serverError(fakeError);
 
-    const logSpy = jest.spyOn(logErrorRepositoryStub, 'log');
+    const logSpy = jest.spyOn(logErrorRepositoryStub, 'logError');
     jest.spyOn(controllerStub, 'handle').mockResolvedValueOnce(error);
 
     const httpRequest = makeFakeRequest();

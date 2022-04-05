@@ -14,7 +14,7 @@ export class LogControllerDecorator<ReqBody, ResBody> implements Controller<ReqB
   async handle(httpRequest: HttpRequest<ReqBody>) {
     const httpResponse = await this.controller.handle(httpRequest);
     if (httpResponse.statusCode === 500) {
-      this.logErrorRepository.log((httpResponse.body as Error).stack!);
+      this.logErrorRepository.logError((httpResponse.body as Error).stack!);
     }
 
     return httpResponse;
